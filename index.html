@@ -1,0 +1,457 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gubins - Advanced Delivery Booking</title>
+    
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+    
+    <style>
+        /* Custom styles to apply the Poppins font */
+        body {
+            font-family: 'Poppins', sans-serif;
+        }
+        /* Hide number input spinners */
+        input[type=number]::-webkit-inner-spin-button, 
+        input[type=number]::-webkit-outer-spin-button { 
+          -webkit-appearance: none; 
+          margin: 0; 
+        }
+        input[type=number] {
+          -moz-appearance: textfield;
+        }
+        /* Style for the native date picker icon */
+        input[type="date"]::-webkit-calendar-picker-indicator {
+            cursor: pointer;
+            opacity: 0.6;
+            filter: invert(0.5); /* Adjust based on your color scheme */
+        }
+    </style>
+</head>
+<body class="bg-gray-100 flex items-center justify-center min-h-screen p-4">
+
+    <div class="w-full max-w-4xl bg-white rounded-2xl shadow-lg p-6 md:p-10">
+        
+        <div class="flex flex-col md:flex-row gap-8 md:gap-12">
+
+            <div class="w-full md:w-2/3">
+                <h1 class="text-3xl font-bold text-gray-800 mb-2">Book a Delivery</h1>
+                <p class="text-gray-500 mb-8">Fast, reliable, and right at your doorstep.</p>
+
+                <div id="step-indicator" class="flex items-center justify-between mb-8">
+                    <div class="step active flex items-center flex-col text-center w-1/3">
+                        <div class="step-circle w-10 h-10 bg-red-600 text-white rounded-full flex items-center justify-center font-bold text-lg">1</div>
+                        <p class="step-label mt-2 text-sm font-semibold text-red-600">Location & Schedule</p>
+                    </div>
+                    <div class="flex-auto border-t-2 border-gray-200 transition-all duration-500"></div>
+                    <div class="step flex items-center flex-col text-center w-1/3">
+                        <div class="step-circle w-10 h-10 bg-gray-200 text-gray-500 rounded-full flex items-center justify-center font-bold text-lg">2</div>
+                        <p class="step-label mt-2 text-sm font-medium text-gray-400">Package</p>
+                    </div>
+                    <div class="flex-auto border-t-2 border-gray-200 transition-all duration-500"></div>
+                    <div class="step flex items-center flex-col text-center w-1/3">
+                        <div class="step-circle w-10 h-10 bg-gray-200 text-gray-500 rounded-full flex items-center justify-center font-bold text-lg">3</div>
+                        <p class="step-label mt-2 text-sm font-medium text-gray-400">Confirm</p>
+                    </div>
+                </div>
+
+                <form id="delivery-form">
+                    <div id="step-1" class="form-step active-step">
+                        <h2 class="text-xl font-semibold text-gray-700 mb-4">Pickup & Delivery Locations</h2>
+                        <div class="space-y-6">
+                            <fieldset class="border border-gray-200 rounded-lg p-4">
+                                <legend class="text-sm font-semibold px-2 text-gray-600">Pickup Details</legend>
+                                <div class="grid grid-cols-1 gap-4">
+                                    <div class="relative">
+                                        <div class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
+                                            <svg class="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13v-6m0 6l6-3m-6 3V7m6 10l5.447 2.724A1 1 0 0021 16.382V5.618a1 1 0 00-1.447-.894L15 7m-6 3v6m6-6v6"></path></svg>
+                                        </div>
+                                        <input type="text" id="pickup" name="pickup" class="w-full pl-10 pr-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-red-500 transition" placeholder="Enter pickup address">
+                                    </div>
+                                    <input type="text" id="pickup_suite" name="pickup_suite" class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-red-500 transition" placeholder="Apt, Suite, House No. (Optional)">
+                                </div>
+                            </fieldset>
+                            
+                            <fieldset class="border border-gray-200 rounded-lg p-4">
+                                <legend class="text-sm font-semibold px-2 text-gray-600">Delivery Details</legend>
+                                <div class="grid grid-cols-1 gap-4">
+                                    <div class="relative">
+                                        <div class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
+                                            <svg class="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
+                                        </div>
+                                        <input type="text" id="delivery" name="delivery" class="w-full pl-10 pr-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-red-500 transition" placeholder="Enter delivery address">
+                                    </div>
+                                    <input type="text" id="delivery_suite" name="delivery_suite" class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-red-500 transition" placeholder="Apt, Suite, House No. (Optional)">
+                                </div>
+                            </fieldset>
+
+                            <div class="mt-6">
+                                <label class="block text-sm font-medium text-gray-600 mb-2">Delivery Speed</label>
+                                <div class="grid grid-cols-2 gap-4">
+                                    <div id="delivery-sameday" class="delivery-type-card p-4 border-2 border-red-600 bg-red-50 rounded-lg text-center cursor-pointer ring-2 ring-red-500">
+                                        <p class="font-semibold text-gray-800">Same Day</p>
+                                        <p class="text-xs text-gray-500">Deliver today</p>
+                                    </div>
+                                    <div id="delivery-schedule" class="delivery-type-card p-4 border-2 border-gray-200 rounded-lg text-center cursor-pointer hover:border-red-500">
+                                        <p class="font-semibold text-gray-800">Schedule</p>
+                                        <p class="text-xs text-gray-500">Pick a date</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div id="schedule-container" class="mt-4 hidden">
+                                 <label for="schedule_date" class="block text-sm font-medium text-gray-600 mb-1">Select Delivery Date</label>
+                                 <input type="date" id="schedule_date" name="schedule_date" class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-red-500 transition">
+                            </div>
+
+                        </div>
+                    </div>
+
+                    <div id="step-2" class="form-step hidden">
+                        <h2 class="text-xl font-semibold text-gray-700 mb-4">Package Details</h2>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-600 mb-2">Package Size</label>
+                            <div id="package-selection" class="grid grid-cols-2 sm:grid-cols-4 gap-4">
+                                </div>
+                        </div>
+                    </div>
+
+                    <div id="step-3" class="form-step hidden">
+                        <h2 class="text-xl font-semibold text-gray-700 mb-6">Contact Information</h2>
+                        <div class="space-y-6">
+                             <fieldset class="border border-gray-200 rounded-lg p-4">
+                                <legend class="text-sm font-semibold px-2 text-gray-600">Sender Details</legend>
+                                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                                    <input type="text" id="sender_name" name="sender_name" class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-red-500 transition" placeholder="Sender's Name">
+                                    <input type="number" id="sender_phone" name="sender_phone" class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-red-500 transition" placeholder="Sender's Mobile">
+                                </div>
+                            </fieldset>
+                             <fieldset class="border border-gray-200 rounded-lg p-4">
+                                <legend class="text-sm font-semibold px-2 text-gray-600">Receiver Details</legend>
+                                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                                    <input type="text" id="receiver_name" name="receiver_name" class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-red-500 transition" placeholder="Receiver's Name">
+                                    <input type="number" id="receiver_phone" name="receiver_phone" class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-red-500 transition" placeholder="Receiver's Mobile">
+                                </div>
+                            </fieldset>
+                        </div>
+                         <div class="mt-6">
+                            <label class="flex items-center">
+                                <input type="checkbox" id="terms" name="terms" class="h-4 w-4 text-red-600 border-gray-300 rounded focus:ring-red-500">
+                                <span class="ml-2 text-sm text-gray-600">I am not sending any <a href="#" class="text-red-600 hover:underline font-medium">restricted items</a>.</span>
+                            </label>
+                        </div>
+                    </div>
+
+                    <div class="mt-8 flex justify-between">
+                        <button type="button" id="back-btn" class="bg-gray-200 text-gray-700 font-bold py-2.5 px-6 rounded-lg hover:bg-gray-300 transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed" disabled>Back</button>
+                        <button type="button" id="next-btn" class="bg-red-600 text-white font-bold py-2.5 px-6 rounded-lg hover:bg-red-700 transition-all duration-300">Next</button>
+                        <button type="submit" id="submit-btn" class="bg-green-500 text-white font-bold py-2.5 px-6 rounded-lg hover:bg-green-600 transition-all duration-300 hidden">Place Order</button>
+                    </div>
+                </form>
+            </div>
+
+            <div class="w-full md:w-1/3 bg-gray-50 rounded-xl p-6 self-start">
+                <h3 class="text-lg font-bold text-gray-800 border-b pb-3 mb-4">Order Summary</h3>
+                <div id="summary-content" class="space-y-3 text-sm hidden">
+                    <div class="flex justify-between">
+                        <span class="text-gray-500">From:</span>
+                        <span id="summary-pickup" class="font-medium text-gray-800 text-right">Not set</span>
+                    </div>
+                    <div class="flex justify-between">
+                        <span class="text-gray-500">To:</span>
+                        <span id="summary-delivery" class="font-medium text-gray-800 text-right">Not set</span>
+                    </div>
+                    <div class="flex justify-between">
+                        <span class="text-gray-500">Package:</span>
+                        <span id="summary-package" class="font-medium text-gray-800">Not set</span>
+                    </div>
+                   <div class="flex justify-between">
+                        <span class="text-gray-500">Delivery:</span>
+                        <span id="summary-delivery-type" class="font-medium text-gray-800">Same Day</span>
+                    </div>
+                    <div id="summary-schedule-row" class="flex justify-between hidden">
+                        <span class="text-gray-500">Date:</span>
+                        <span id="summary-schedule-date" class="font-medium text-gray-800"></span>
+                    </div>
+                </div>
+                <div class="border-t mt-4 pt-4 hidden" id="summary-total-container">
+                    <div class="flex justify-between items-center">
+                        <span class="text-lg font-semibold text-gray-800">Total</span>
+                        <span id="summary-total" class="text-2xl font-bold text-red-600">₹0.00</span>
+                    </div>
+                </div>
+                <div id="summary-placeholder" class="text-center text-gray-400 text-sm mt-8">
+                    <svg class="w-12 h-12 mx-auto mb-2 text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"></path></svg>
+                    <p>Your order details will appear here.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            // --- STATE MANAGEMENT ---
+            let currentStep = 1;
+            const totalSteps = 3;
+            const orderDetails = {
+                pickup: '',
+                pickup_suite: '',
+                delivery: '',
+                delivery_suite: '',
+                package: null,
+                delivery_type: 'sameday',
+                schedule_date: '',
+                sender_name: '',
+                sender_phone: '',
+                receiver_name: '',
+                receiver_phone: '',
+                price: 0,
+                distance: 0
+            };
+
+            const packageData = [
+                { id: 'small', name: 'Small', weight: 'Up to 3kg', icon: '<svg class="w-8 h-8 mx-auto mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"></path></svg>', basePrice: 150 },
+                { id: 'medium', name: 'Medium', weight: 'Up to 5kg', icon: '<svg class="w-8 h-8 mx-auto mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M4 7v10c0 2.21 3.582 4 8 4s8-1.79 8-4V7M4 7c0-2.21 3.582-4 8-4s8 1.79 8 4M4 7l8 4.5M20 7l-8 4.5m0 0V21"></path></svg>', basePrice: 250 },
+                { id: 'large', name: 'Large', weight: 'Up to 10kg', icon: '<svg class="w-8 h-8 mx-auto mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M20 12H4"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M20 12H4"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 4v16"></path></svg>', basePrice: 400 },
+                { id: 'extra-large', name: 'X-Large', weight: 'Up to 15kg', icon: '<svg class="w-8 h-8 mx-auto mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"></path></svg>', basePrice: 550 }
+            ];
+
+            // --- DOM ELEMENTS ---
+            const backBtn = document.getElementById('back-btn');
+            const nextBtn = document.getElementById('next-btn');
+            const submitBtn = document.getElementById('submit-btn');
+            const formSteps = document.querySelectorAll('.form-step');
+            const stepIndicators = document.querySelectorAll('#step-indicator .step');
+            const packageSelectionContainer = document.getElementById('package-selection');
+            const scheduleContainer = document.getElementById('schedule-container');
+            const scheduleInput = document.getElementById('schedule_date');
+            const deliveryTypeCards = document.querySelectorAll('.delivery-type-card');
+
+            // --- INITIALIZATION ---
+            function initializePackageSelection() {
+                packageData.forEach(pkg => {
+                    const card = document.createElement('div');
+                    card.className = 'package-card p-4 border-2 border-gray-200 rounded-lg text-center cursor-pointer hover:border-red-500 hover:bg-red-50 transition-all duration-300';
+                    card.dataset.packageId = pkg.id;
+                    card.innerHTML = `
+                        ${pkg.icon}
+                        <p class="font-semibold text-gray-800">${pkg.name}</p>
+                        <p class="text-xs text-gray-500">${pkg.weight}</p>
+                    `;
+                    card.addEventListener('click', () => selectPackage(pkg, card));
+                    packageSelectionContainer.appendChild(card);
+                });
+            }
+            
+            function setMinScheduleDate() {
+                const today = new Date();
+                today.setDate(today.getDate() + 1); // Minimum schedule date is tomorrow
+                const yyyy = today.getFullYear();
+                const mm = String(today.getMonth() + 1).padStart(2, '0');
+                const dd = String(today.getDate()).padStart(2, '0');
+                scheduleInput.min = `${yyyy}-${mm}-${dd}`;
+            }
+
+            // --- UI UPDATE FUNCTIONS ---
+            function updateStepUI() {
+                formSteps.forEach((step, index) => {
+                    step.classList.toggle('hidden', index + 1 !== currentStep);
+                    step.classList.toggle('active-step', index + 1 === currentStep);
+                });
+
+                stepIndicators.forEach((step, index) => {
+                    const circle = step.querySelector('.step-circle');
+                    const label = step.querySelector('.step-label');
+                    const line = step.previousElementSibling;
+
+                    if (index < currentStep) {
+                        circle.classList.remove('bg-gray-200', 'text-gray-500');
+                        circle.classList.add('bg-red-600', 'text-white');
+                        label.classList.remove('text-gray-400');
+                        label.classList.add('text-red-600', 'font-semibold');
+                        if(line && line.classList.contains('border-t-2')) line.classList.add('border-red-600');
+                    } else {
+                        circle.classList.add('bg-gray-200', 'text-gray-500');
+                        circle.classList.remove('bg-red-600', 'text-white');
+                        label.classList.add('text-gray-400');
+                        label.classList.remove('text-red-600', 'font-semibold');
+                        if(line && line.classList.contains('border-t-2')) line.classList.remove('border-red-600');
+                    }
+                });
+
+                backBtn.disabled = currentStep === 1;
+                nextBtn.classList.toggle('hidden', currentStep === totalSteps);
+                submitBtn.classList.toggle('hidden', currentStep !== totalSteps);
+            }
+
+            function updateSummary() {
+                const pickupFull = orderDetails.pickup + (orderDetails.pickup_suite ? `, ${orderDetails.pickup_suite}` : '');
+                const deliveryFull = orderDetails.delivery + (orderDetails.delivery_suite ? `, ${orderDetails.delivery_suite}` : '');
+                
+                document.getElementById('summary-pickup').textContent = pickupFull || 'Not set';
+                document.getElementById('summary-delivery').textContent = deliveryFull || 'Not set';
+                document.getElementById('summary-package').textContent = orderDetails.package ? orderDetails.package.name : 'Not set';
+                
+                document.getElementById('summary-delivery-type').textContent = orderDetails.delivery_type === 'sameday' ? 'Same Day' : 'Scheduled';
+                
+                const scheduleRow = document.getElementById('summary-schedule-row');
+                if (orderDetails.delivery_type === 'schedule' && orderDetails.schedule_date) {
+                    document.getElementById('summary-schedule-date').textContent = orderDetails.schedule_date;
+                    scheduleRow.classList.remove('hidden');
+                } else {
+                    scheduleRow.classList.add('hidden');
+                }
+
+                if (orderDetails.pickup && orderDetails.delivery) {
+                    orderDetails.distance = Math.floor(Math.random() * 25) + 5;
+                } else {
+                    orderDetails.distance = 0;
+                }
+                
+                let total = 0;
+                if (orderDetails.package) {
+                    total += orderDetails.package.basePrice;
+                }
+                if (orderDetails.distance > 0) {
+                    total += orderDetails.distance * 10;
+                }
+                if (orderDetails.delivery_type === 'sameday') {
+                    total *= 1.2; // 20% premium for same day
+                }
+                orderDetails.price = total;
+
+                document.getElementById('summary-total').textContent = `₹${orderDetails.price.toFixed(2)}`;
+                
+                const placeholder = document.getElementById('summary-placeholder');
+                const summaryContent = document.getElementById('summary-content');
+                const summaryTotal = document.getElementById('summary-total-container');
+                if (orderDetails.pickup || orderDetails.delivery || orderDetails.package || orderDetails.delivery_type) {
+                    placeholder.classList.add('hidden');
+                    summaryContent.classList.remove('hidden');
+                    summaryTotal.classList.remove('hidden');
+                } else {
+                    placeholder.classList.remove('hidden');
+                    summaryContent.classList.add('hidden');
+                    summaryTotal.classList.add('hidden');
+                }
+            }
+
+            // --- EVENT HANDLERS ---
+            function selectPackage(pkg, selectedCard) {
+                orderDetails.package = pkg;
+                document.querySelectorAll('.package-card').forEach(card => {
+                    card.classList.remove('border-red-600', 'bg-red-50', 'ring-2', 'ring-red-500');
+                });
+                selectedCard.classList.add('border-red-600', 'bg-red-50', 'ring-2', 'ring-red-500');
+                updateSummary();
+            }
+            
+            deliveryTypeCards.forEach(card => {
+                card.addEventListener('click', () => {
+                    deliveryTypeCards.forEach(c => c.classList.remove('border-red-600', 'bg-red-50', 'ring-2', 'ring-red-500'));
+                    card.classList.add('border-red-600', 'bg-red-50', 'ring-2', 'ring-red-500');
+                    
+                    if (card.id === 'delivery-schedule') {
+                        orderDetails.delivery_type = 'schedule';
+                        scheduleContainer.classList.remove('hidden');
+                    } else {
+                        orderDetails.delivery_type = 'sameday';
+                        scheduleContainer.classList.add('hidden');
+                        orderDetails.schedule_date = '';
+                        scheduleInput.value = '';
+                    }
+                    updateSummary();
+                });
+            });
+
+            function validateStep() {
+                if (currentStep === 1) {
+                    const pickup = document.getElementById('pickup').value.trim();
+                    const delivery = document.getElementById('delivery').value.trim();
+                    if (!pickup || !delivery) {
+                        alert('Please fill in both pickup and delivery addresses.');
+                        return false;
+                    }
+                    if (orderDetails.delivery_type === 'schedule' && !orderDetails.schedule_date) {
+                         alert('Please select a date for your scheduled delivery.');
+                         return false;
+                    }
+                } else if (currentStep === 2) {
+                    if (!orderDetails.package) {
+                        alert('Please select a package size.');
+                        return false;
+                    }
+                } else if (currentStep === 3) {
+                     const fields = ['sender_name', 'sender_phone', 'receiver_name', 'receiver_phone'];
+                     for (const id of fields) {
+                         if (!document.getElementById(id).value.trim()) {
+                             alert('Please fill in all sender and receiver details.');
+                             return false;
+                         }
+                     }
+                     if(!document.getElementById('terms').checked){
+                         alert('Please agree to the terms by checking the box.');
+                         return false;
+                     }
+                }
+                return true;
+            }
+            
+            function captureFormValues() {
+                orderDetails.pickup = document.getElementById('pickup').value.trim();
+                orderDetails.pickup_suite = document.getElementById('pickup_suite').value.trim();
+                orderDetails.delivery = document.getElementById('delivery').value.trim();
+                orderDetails.delivery_suite = document.getElementById('delivery_suite').value.trim();
+                orderDetails.schedule_date = document.getElementById('schedule_date').value;
+                orderDetails.sender_name = document.getElementById('sender_name').value.trim();
+                orderDetails.sender_phone = document.getElementById('sender_phone').value.trim();
+                orderDetails.receiver_name = document.getElementById('receiver_name').value.trim();
+                orderDetails.receiver_phone = document.getElementById('receiver_phone').value.trim();
+            }
+
+            nextBtn.addEventListener('click', () => {
+                captureFormValues();
+                if (validateStep() && currentStep < totalSteps) {
+                    currentStep++;
+                    updateStepUI();
+                }
+                updateSummary();
+            });
+
+            backBtn.addEventListener('click', () => {
+                if (currentStep > 1) {
+                    currentStep--;
+                    captureFormValues();
+                    updateStepUI();
+                    updateSummary();
+                }
+            });
+            
+            submitBtn.addEventListener('click', (e) => {
+                e.preventDefault();
+                captureFormValues();
+                if(validateStep()){
+                    console.log('Form Submitted!', orderDetails);
+                    alert(`Thank you, ${orderDetails.sender_name}! Your order has been placed. Total: ₹${orderDetails.price.toFixed(2)}`);
+                }
+            });
+            
+            document.getElementById('delivery-form').addEventListener('input', (e) => {
+                captureFormValues();
+                updateSummary();
+            });
+
+            // --- RUN ---
+            initializePackageSelection();
+            setMinScheduleDate();
+            updateStepUI();
+            updateSummary();
+        });
+    </script>
+
+</body>
+</html>
