@@ -111,8 +111,8 @@
                             </div>
 
                             <div id="time-selection-container" class="mt-4 hidden space-y-4">
-                                <fieldset class="border border-gray-200 rounded-lg p-4" id="pickup-datetime-fieldset">
-                                    <legend class="text-sm font-semibold px-2 text-gray-600">Pickup Date & Time</legend>
+                                <fieldset class="border border-gray-200 rounded-lg p-4">
+                                    <legend class="text-sm font-semibold px-2 text-gray-600" id="pickup-fieldset-legend">Pickup Time</legend>
                                     <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                                         <div id="pickup-date-input" class="hidden">
                                             <label for="pickup_date" class="block text-sm font-medium text-gray-600 mb-1">Date</label>
@@ -125,8 +125,8 @@
                                     </div>
                                 </fieldset>
 
-                                <fieldset class="border border-gray-200 rounded-lg p-4" id="drop-datetime-fieldset">
-                                    <legend class="text-sm font-semibold px-2 text-gray-600">Drop Date & Time</legend>
+                                <fieldset class="border border-gray-200 rounded-lg p-4">
+                                    <legend class="text-sm font-semibold px-2 text-gray-600" id="drop-fieldset-legend">Drop Time (Estimated)</legend>
                                     <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                                         <div id="drop-date-input" class="hidden">
                                             <label for="drop_date" class="block text-sm font-medium text-gray-600 mb-1">Date</label>
@@ -272,9 +272,9 @@
                 delivery_suite: '',
                 package: null,
                 delivery_type: 'sameday',
-                pickup_date: '', // New
+                pickup_date: '', 
                 pickup_time: '',
-                drop_date: '', // New
+                drop_date: '', 
                 drop_time: '',
                 sender_name: '',
                 sender_phone: '',
@@ -308,12 +308,17 @@
             const stepIndicators = document.querySelectorAll('#step-indicator .step');
             const packageSelectionContainer = document.getElementById('package-selection');
             const timeSelectionContainer = document.getElementById('time-selection-container'); // Parent for all date/time fields
-            const pickupDateInput = document.getElementById('pickup_date'); // Specific pickup date input
-            const dropDateInput = document.getElementById('drop_date'); // Specific drop date input
+            
+            const pickupDateInput = document.getElementById('pickup_date'); 
+            const dropDateInput = document.getElementById('drop_date'); 
             const pickupTimeInput = document.getElementById('pickup_time');
             const dropTimeInput = document.getElementById('drop_time');
+            
             const pickupDateSection = document.getElementById('pickup-date-input'); // Div containing pickup date
-            const dropDateSection = document.getElementById('drop-date-input'); // Div containing drop date
+            const dropDateSection = document.getElementById('drop-date-input');   // Div containing drop date
+            
+            const pickupFieldsetLegend = document.getElementById('pickup-fieldset-legend'); // Legend for pickup time/date
+            const dropFieldsetLegend = document.getElementById('drop-fieldset-legend');     // Legend for drop time/date
 
             const deliveryTypeCards = document.querySelectorAll('.delivery-type-card');
 
@@ -338,15 +343,10 @@
                 const yyyy = today.getFullYear();
                 const mm = String(today.getMonth() + 1).padStart(2, '0');
                 const dd = String(today.getDate()).padStart(2, '0');
-                const tomorrow = new Date(today);
-                tomorrow.setDate(tomorrow.getDate() + 1);
-                const tmrw_yyyy = tomorrow.getFullYear();
-                const tmrw_mm = String(tomorrow.getMonth() + 1).padStart(2, '0');
-                const tmrw_dd = String(tomorrow.getDate()).padStart(2, '0');
-
-                // For scheduled delivery, pickup date can be today or later
+                
+                // Pickup date can be today or later
                 pickupDateInput.min = `${yyyy}-${mm}-${dd}`;
-                // Drop date cannot be before pickup date
+                // Drop date minimum is dynamically set based on pickup date, or today if pickup date is empty
                 dropDateInput.min = `${yyyy}-${mm}-${dd}`; 
             }
 
@@ -406,11 +406,9 @@
                 // Price per kilometer
                 if (orderDetails.distance > 0) {
                     distance_charge = orderDetails.distance * KILOMETER_RATE;
-                    // Note: For calculation of premium/tax, distance charge is added to a running subtotal.
-                    // The "Subtotal" displayed in summary is purely package base cost.
                 }
                 
-                let calculationBase = subtotal + distance_charge;
+                let calculationBase = subtotal + distance_charge; // Base for premium and tax
 
                 // Same day premium
                 if (orderDetails.delivery_type === 'sameday') {
@@ -423,7 +421,7 @@
                 grand_total = calculationBase + tax_amount;
 
                 // Store calculated values in orderDetails for summary display
-                orderDetails.subtotal = orderDetails.package ? orderDetails.package.baseCostFactor : 0; 
+                orderDetails.subtotal = orderDetails.package ? orderDetails.package.baseCostFactor : 0; // Pure package cost
                 orderDetails.distance_charge = distance_charge;
                 orderDetails.premium_charge = premium_charge;
                 orderDetails.tax_amount = tax_amount;
@@ -446,23 +444,35 @@
                 const summaryPickupDateTimeRow = document.getElementById('summary-pickup-datetime-row');
                 const summaryDropDateTimeRow = document.getElementById('summary-drop-datetime-row');
 
-                if (orderDetails.delivery_type === 'sameday') {
-                    document.getElementById('summary-pickup-datetime').textContent = orderDetails.pickup_time || 'Not set';
-                    document.getElementById('summary-drop-datetime').textContent = orderDetails.drop_time || 'Not set';
-                    summaryPickupDateTimeRow.classList.remove('hidden');
-                    summaryDropDateTimeRow.classList.remove('hidden');
-                } else if (orderDetails.delivery_type === 'schedule') {
-                    const pickupDateTime = (orderDetails.pickup_date ? `${orderDetails.pickup_date} ` : '') + (orderDetails.pickup_time || 'Not set');
-                    const dropDateTime = (orderDetails.drop_date ? `${orderDetails.drop_date} ` : '') + (orderDetails.drop_time || 'Not set');
-                    
-                    document.getElementById('summary-pickup-datetime').textContent = pickupDateTime.trim() || 'Not set';
-                    document.getElementById('summary-drop-datetime').textContent = dropDateTime.trim() || 'Not set';
-                    summaryPickupDateTimeRow.classList.remove('hidden');
-                    summaryDropDateTimeRow.classList.remove('hidden');
+                // Logic for displaying pickup/drop date/time in summary
+                let pickupDateTimeText = '';
+                let dropDateTimeText = '';
+
+                if (orderDetails.pickup_time) {
+                    if (orderDetails.delivery_type === 'schedule' && orderDetails.pickup_date) {
+                        pickupDateTimeText = `${orderDetails.pickup_date} ${orderDetails.pickup_time}`;
+                    } else { // Same Day
+                        pickupDateTimeText = orderDetails.pickup_time;
+                    }
                 } else {
-                    summaryPickupDateTimeRow.classList.add('hidden');
-                    summaryDropDateTimeRow.classList.add('hidden');
+                    pickupDateTimeText = 'Not set';
                 }
+
+                if (orderDetails.drop_time) {
+                    if (orderDetails.delivery_type === 'schedule' && orderDetails.drop_date) {
+                        dropDateTimeText = `${orderDetails.drop_date} ${orderDetails.drop_time}`;
+                    } else { // Same Day
+                        dropDateTimeText = orderDetails.drop_time;
+                    }
+                } else {
+                    dropDateTimeText = 'Not set';
+                }
+                
+                document.getElementById('summary-pickup-datetime').textContent = pickupDateTimeText;
+                document.getElementById('summary-drop-datetime').textContent = dropDateTimeText;
+                summaryPickupDateTimeRow.classList.remove('hidden');
+                summaryDropDateTimeRow.classList.remove('hidden');
+
 
                 // Display sender and receiver names + numbers
                 document.getElementById('summary-sender-details').textContent = `${orderDetails.sender_name || 'Not set'} (${orderDetails.sender_phone || 'N/A'})`;
@@ -513,10 +523,14 @@
                         orderDetails.delivery_type = 'schedule';
                         pickupDateSection.classList.remove('hidden'); // Show pickup date picker
                         dropDateSection.classList.remove('hidden');   // Show drop date picker
+                        pickupFieldsetLegend.textContent = "Pickup Date & Time"; // Change legend
+                        dropFieldsetLegend.textContent = "Drop Date & Time";     // Change legend
                     } else { // Same Day
                         orderDetails.delivery_type = 'sameday';
                         pickupDateSection.classList.add('hidden'); // Hide pickup date picker
                         dropDateSection.classList.add('hidden');   // Hide drop date picker
+                        pickupFieldsetLegend.textContent = "Pickup Time";        // Change legend
+                        dropFieldsetLegend.textContent = "Drop Time (Estimated)";// Change legend
                         
                         // Clear scheduled dates if switching to same day
                         orderDetails.pickup_date = '';
@@ -662,6 +676,8 @@
             timeSelectionContainer.classList.remove('hidden'); // Time fields are always visible when delivery type is selected
             pickupDateSection.classList.add('hidden'); // Hide date fields initially for Same Day
             dropDateSection.classList.add('hidden');   // Hide date fields initially for Same Day
+            pickupFieldsetLegend.textContent = "Pickup Time";        // Set initial legend for Same Day
+            dropFieldsetLegend.textContent = "Drop Time (Estimated)";// Set initial legend for Same Day
         });
     </script>
 
