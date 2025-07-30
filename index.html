@@ -59,7 +59,7 @@
                         <div class="step-circle w-10 h-10 bg-gray-200 text-gray-500 rounded-full flex items-center justify-center font-bold text-lg">2</div>
                         <p class="step-label mt-2 text-sm font-medium text-gray-400">Package</p>
                     </div>
-                    <div class="flex-auto border-t-2 border-gray-20-0 transition-all duration-500"></div>
+                    <div class="flex-auto border-t-2 border-gray-200 transition-all duration-500"></div>
                     <div class="step flex items-center flex-col text-center w-1/3">
                         <div class="step-circle w-10 h-10 bg-gray-200 text-gray-500 rounded-full flex items-center justify-center font-bold text-lg">3</div>
                         <p class="step-label mt-2 text-sm font-medium text-gray-400">Confirm</p>
@@ -110,22 +110,35 @@
                                 </div>
                             </div>
 
-                            <div id="schedule-time-container" class="mt-4 hidden space-y-4">
-                                <div id="schedule-date-input" class="hidden">
-                                    <label for="schedule_date" class="block text-sm font-medium text-gray-600 mb-1">Select Delivery Date</label>
-                                    <input type="date" id="schedule_date" name="schedule_date" class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-red-500 transition">
-                                </div>
+                            <div id="time-selection-container" class="mt-4 hidden space-y-4">
+                                <fieldset class="border border-gray-200 rounded-lg p-4" id="pickup-datetime-fieldset">
+                                    <legend class="text-sm font-semibold px-2 text-gray-600">Pickup Date & Time</legend>
+                                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                                        <div id="pickup-date-input" class="hidden">
+                                            <label for="pickup_date" class="block text-sm font-medium text-gray-600 mb-1">Date</label>
+                                            <input type="date" id="pickup_date" name="pickup_date" class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-red-500 transition">
+                                        </div>
+                                        <div>
+                                            <label for="pickup_time" class="block text-sm font-medium text-gray-600 mb-1">Time</label>
+                                            <input type="time" id="pickup_time" name="pickup_time" class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-red-500 transition">
+                                        </div>
+                                    </div>
+                                </fieldset>
 
-                                <div>
-                                    <label for="pickup_time" class="block text-sm font-medium text-gray-600 mb-1">Pickup Time</label>
-                                    <input type="time" id="pickup_time" name="pickup_time" class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-red-500 transition">
-                                </div>
-                                <div>
-                                    <label for="drop_time" class="block text-sm font-medium text-gray-600 mb-1">Drop Time (Estimated)</label>
-                                    <input type="time" id="drop_time" name="drop_time" class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-red-500 transition">
-                                </div>
+                                <fieldset class="border border-gray-200 rounded-lg p-4" id="drop-datetime-fieldset">
+                                    <legend class="text-sm font-semibold px-2 text-gray-600">Drop Date & Time</legend>
+                                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                                        <div id="drop-date-input" class="hidden">
+                                            <label for="drop_date" class="block text-sm font-medium text-gray-600 mb-1">Date</label>
+                                            <input type="date" id="drop_date" name="drop_date" class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-red-500 transition">
+                                        </div>
+                                        <div>
+                                            <label for="drop_time" class="block text-sm font-medium text-gray-600 mb-1">Time</label>
+                                            <input type="time" id="drop_time" name="drop_time" class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-red-500 transition">
+                                        </div>
+                                    </div>
+                                </fieldset>
                             </div>
-
                         </div>
                     </div>
 
@@ -195,25 +208,23 @@
                         <span class="text-gray-500">Delivery:</span>
                         <span id="summary-delivery-type" class="font-medium text-gray-800">Same Day</span>
                     </div>
-                    <div id="summary-schedule-row" class="flex justify-between hidden">
-                        <span class="text-gray-500">Date:</span>
-                        <span id="summary-schedule-date" class="font-medium text-gray-800"></span>
+
+                    <div id="summary-pickup-datetime-row" class="flex justify-between hidden">
+                        <span class="text-gray-500">Pickup Date/Time:</span>
+                        <span id="summary-pickup-datetime" class="font-medium text-gray-800"></span>
                     </div>
-                    <div class="flex justify-between">
-                        <span class="text-gray-500">Pickup Time:</span>
-                        <span id="summary-pickup-time" class="font-medium text-gray-800"></span>
+                    <div id="summary-drop-datetime-row" class="flex justify-between hidden">
+                        <span class="text-gray-500">Drop Date/Time:</span>
+                        <span id="summary-drop-datetime" class="font-medium text-gray-800"></span>
                     </div>
-                    <div class="flex justify-between">
-                        <span class="text-gray-500">Drop Time:</span>
-                        <span id="summary-drop-time" class="font-medium text-gray-800"></span>
-                    </div>
+
                     <div class="flex justify-between border-t pt-3 mt-3">
                         <span class="text-gray-500">Sender:</span>
-                        <span id="summary-sender-name" class="font-medium text-gray-800"></span>
+                        <span id="summary-sender-details" class="font-medium text-gray-800"></span>
                     </div>
                     <div class="flex justify-between">
                         <span class="text-gray-500">Receiver:</span>
-                        <span id="summary-receiver-name" class="font-medium text-gray-800"></span>
+                        <span id="summary-receiver-details" class="font-medium text-gray-800"></span>
                     </div>
 
                     <div class="border-t pt-3 mt-3 space-y-2">
@@ -261,8 +272,9 @@
                 delivery_suite: '',
                 package: null,
                 delivery_type: 'sameday',
-                schedule_date: '',
+                pickup_date: '', // New
                 pickup_time: '',
+                drop_date: '', // New
                 drop_time: '',
                 sender_name: '',
                 sender_phone: '',
@@ -272,7 +284,7 @@
                 distance_charge: 0,
                 premium_charge: 0,
                 tax_amount: 0,
-                grand_total: 0, // Changed from 'price' to 'grand_total' for clarity
+                grand_total: 0,
                 distance: 0
             };
 
@@ -295,11 +307,14 @@
             const formSteps = document.querySelectorAll('.form-step');
             const stepIndicators = document.querySelectorAll('#step-indicator .step');
             const packageSelectionContainer = document.getElementById('package-selection');
-            const scheduleTimeContainer = document.getElementById('schedule-time-container'); // Parent for date and time
-            const scheduleDateInput = document.getElementById('schedule-date-input'); // Date input specific container
-            const scheduleInput = document.getElementById('schedule_date');
+            const timeSelectionContainer = document.getElementById('time-selection-container'); // Parent for all date/time fields
+            const pickupDateInput = document.getElementById('pickup_date'); // Specific pickup date input
+            const dropDateInput = document.getElementById('drop_date'); // Specific drop date input
             const pickupTimeInput = document.getElementById('pickup_time');
             const dropTimeInput = document.getElementById('drop_time');
+            const pickupDateSection = document.getElementById('pickup-date-input'); // Div containing pickup date
+            const dropDateSection = document.getElementById('drop-date-input'); // Div containing drop date
+
             const deliveryTypeCards = document.querySelectorAll('.delivery-type-card');
 
             // --- INITIALIZATION ---
@@ -318,13 +333,21 @@
                 });
             }
             
-            function setMinScheduleDate() {
+            function setMinDates() {
                 const today = new Date();
-                today.setDate(today.getDate() + 1); // Minimum schedule date is tomorrow
                 const yyyy = today.getFullYear();
                 const mm = String(today.getMonth() + 1).padStart(2, '0');
                 const dd = String(today.getDate()).padStart(2, '0');
-                scheduleInput.min = `${yyyy}-${mm}-${dd}`;
+                const tomorrow = new Date(today);
+                tomorrow.setDate(tomorrow.getDate() + 1);
+                const tmrw_yyyy = tomorrow.getFullYear();
+                const tmrw_mm = String(tomorrow.getMonth() + 1).padStart(2, '0');
+                const tmrw_dd = String(tomorrow.getDate()).padStart(2, '0');
+
+                // For scheduled delivery, pickup date can be today or later
+                pickupDateInput.min = `${yyyy}-${mm}-${dd}`;
+                // Drop date cannot be before pickup date
+                dropDateInput.min = `${yyyy}-${mm}-${dd}`; 
             }
 
             // --- UI UPDATE FUNCTIONS ---
@@ -383,21 +406,24 @@
                 // Price per kilometer
                 if (orderDetails.distance > 0) {
                     distance_charge = orderDetails.distance * KILOMETER_RATE;
-                    subtotal += distance_charge; // Add distance charge to subtotal for premium/tax calculation
+                    // Note: For calculation of premium/tax, distance charge is added to a running subtotal.
+                    // The "Subtotal" displayed in summary is purely package base cost.
                 }
+                
+                let calculationBase = subtotal + distance_charge;
 
                 // Same day premium
                 if (orderDetails.delivery_type === 'sameday') {
-                    premium_charge = subtotal * SAME_DAY_PREMIUM_PERCENTAGE;
-                    subtotal += premium_charge; // Add premium to subtotal for tax calculation
+                    premium_charge = calculationBase * SAME_DAY_PREMIUM_PERCENTAGE;
+                    calculationBase += premium_charge;
                 }
                 
                 // Tax (Dummy 18%)
-                tax_amount = subtotal * TAX_PERCENTAGE;
-                grand_total = subtotal + tax_amount;
+                tax_amount = calculationBase * TAX_PERCENTAGE;
+                grand_total = calculationBase + tax_amount;
 
-                // Store calculated values in orderDetails
-                orderDetails.subtotal = orderDetails.package ? orderDetails.package.baseCostFactor : 0; // Subtotal for summary display
+                // Store calculated values in orderDetails for summary display
+                orderDetails.subtotal = orderDetails.package ? orderDetails.package.baseCostFactor : 0; 
                 orderDetails.distance_charge = distance_charge;
                 orderDetails.premium_charge = premium_charge;
                 orderDetails.tax_amount = tax_amount;
@@ -417,21 +443,30 @@
                 // Update distance
                 document.getElementById('summary-distance').textContent = orderDetails.distance > 0 ? `${orderDetails.distance} km` : 'Calculating...';
 
-                const scheduleRow = document.getElementById('summary-schedule-row');
-                if (orderDetails.delivery_type === 'schedule' && orderDetails.schedule_date) {
-                    document.getElementById('summary-schedule-date').textContent = orderDetails.schedule_date;
-                    scheduleRow.classList.remove('hidden');
+                const summaryPickupDateTimeRow = document.getElementById('summary-pickup-datetime-row');
+                const summaryDropDateTimeRow = document.getElementById('summary-drop-datetime-row');
+
+                if (orderDetails.delivery_type === 'sameday') {
+                    document.getElementById('summary-pickup-datetime').textContent = orderDetails.pickup_time || 'Not set';
+                    document.getElementById('summary-drop-datetime').textContent = orderDetails.drop_time || 'Not set';
+                    summaryPickupDateTimeRow.classList.remove('hidden');
+                    summaryDropDateTimeRow.classList.remove('hidden');
+                } else if (orderDetails.delivery_type === 'schedule') {
+                    const pickupDateTime = (orderDetails.pickup_date ? `${orderDetails.pickup_date} ` : '') + (orderDetails.pickup_time || 'Not set');
+                    const dropDateTime = (orderDetails.drop_date ? `${orderDetails.drop_date} ` : '') + (orderDetails.drop_time || 'Not set');
+                    
+                    document.getElementById('summary-pickup-datetime').textContent = pickupDateTime.trim() || 'Not set';
+                    document.getElementById('summary-drop-datetime').textContent = dropDateTime.trim() || 'Not set';
+                    summaryPickupDateTimeRow.classList.remove('hidden');
+                    summaryDropDateTimeRow.classList.remove('hidden');
                 } else {
-                    scheduleRow.classList.add('hidden');
+                    summaryPickupDateTimeRow.classList.add('hidden');
+                    summaryDropDateTimeRow.classList.add('hidden');
                 }
 
-                // Display pickup and drop times
-                document.getElementById('summary-pickup-time').textContent = orderDetails.pickup_time || 'Not set';
-                document.getElementById('summary-drop-time').textContent = orderDetails.drop_time || 'Not set';
-
-                // Display sender and receiver names
-                document.getElementById('summary-sender-name').textContent = orderDetails.sender_name || 'Not set';
-                document.getElementById('summary-receiver-name').textContent = orderDetails.receiver_name || 'Not set';
+                // Display sender and receiver names + numbers
+                document.getElementById('summary-sender-details').textContent = `${orderDetails.sender_name || 'Not set'} (${orderDetails.sender_phone || 'N/A'})`;
+                document.getElementById('summary-receiver-details').textContent = `${orderDetails.receiver_name || 'Not set'} (${orderDetails.receiver_phone || 'N/A'})`;
 
                 calculatePrice(); // Recalculate price every time summary updates
                 
@@ -472,20 +507,42 @@
                     deliveryTypeCards.forEach(c => c.classList.remove('border-red-600', 'bg-red-50', 'ring-2', 'ring-red-500'));
                     card.classList.add('border-red-600', 'bg-red-50', 'ring-2', 'ring-red-500');
                     
-                    scheduleTimeContainer.classList.remove('hidden'); // Always show time pickers
+                    timeSelectionContainer.classList.remove('hidden'); // Always show time pickers container
 
                     if (card.id === 'delivery-schedule') {
                         orderDetails.delivery_type = 'schedule';
-                        scheduleDateInput.classList.remove('hidden'); // Show date picker
-                    } else {
+                        pickupDateSection.classList.remove('hidden'); // Show pickup date picker
+                        dropDateSection.classList.remove('hidden');   // Show drop date picker
+                    } else { // Same Day
                         orderDetails.delivery_type = 'sameday';
-                        scheduleDateInput.classList.add('hidden'); // Hide date picker
-                        orderDetails.schedule_date = '';
-                        scheduleInput.value = '';
+                        pickupDateSection.classList.add('hidden'); // Hide pickup date picker
+                        dropDateSection.classList.add('hidden');   // Hide drop date picker
+                        
+                        // Clear scheduled dates if switching to same day
+                        orderDetails.pickup_date = '';
+                        pickupDateInput.value = '';
+                        orderDetails.drop_date = '';
+                        dropDateInput.value = '';
                     }
                     updateSummary();
                 });
             });
+
+            // Event listener to enforce drop date >= pickup date
+            pickupDateInput.addEventListener('change', () => {
+                dropDateInput.min = pickupDateInput.value;
+                if (dropDateInput.value < pickupDateInput.value) {
+                    dropDateInput.value = pickupDateInput.value; // Auto-adjust if invalid
+                }
+                captureFormValues(); // Update order details
+                updateSummary();
+            });
+            
+            dropDateInput.addEventListener('change', () => {
+                 captureFormValues(); // Update order details
+                 updateSummary();
+            });
+
 
             function validateStep() {
                 if (currentStep === 1) {
@@ -498,10 +555,22 @@
                         alert('Please fill in both pickup and delivery addresses.');
                         return false;
                     }
-                    if (orderDetails.delivery_type === 'schedule' && !orderDetails.schedule_date) {
-                         alert('Please select a date for your scheduled delivery.');
-                         return false;
+                    
+                    if (orderDetails.delivery_type === 'schedule') {
+                         if (!orderDetails.pickup_date) {
+                            alert('Please select a pickup date for your scheduled delivery.');
+                            return false;
+                         }
+                         if (!orderDetails.drop_date) {
+                            alert('Please select a drop date for your scheduled delivery.');
+                            return false;
+                         }
+                         if (new Date(orderDetails.drop_date) < new Date(orderDetails.pickup_date)) {
+                            alert('Drop date cannot be earlier than pickup date.');
+                            return false;
+                         }
                     }
+
                     if (!pickupTime || !dropTime) {
                         alert('Please select both pickup and drop times.');
                         return false;
@@ -538,9 +607,12 @@
                 orderDetails.pickup_suite = document.getElementById('pickup_suite').value.trim();
                 orderDetails.delivery = document.getElementById('delivery').value.trim();
                 orderDetails.delivery_suite = document.getElementById('delivery_suite').value.trim();
-                orderDetails.schedule_date = document.getElementById('schedule_date').value;
-                orderDetails.pickup_time = document.getElementById('pickup_time').value;
-                orderDetails.drop_time = document.getElementById('drop_time').value;
+                
+                orderDetails.pickup_date = pickupDateInput.value; // Capture pickup date
+                orderDetails.pickup_time = pickupTimeInput.value;
+                orderDetails.drop_date = dropDateInput.value;     // Capture drop date
+                orderDetails.drop_time = dropTimeInput.value;
+
                 orderDetails.sender_name = document.getElementById('sender_name').value.trim();
                 orderDetails.sender_phone = document.getElementById('sender_phone').value.trim();
                 orderDetails.receiver_name = document.getElementById('receiver_name').value.trim();
@@ -582,15 +654,14 @@
 
             // --- RUN ---
             initializePackageSelection();
-            setMinScheduleDate();
+            setMinDates();
             updateStepUI();
             updateSummary(); // Initial summary update
             
-            // Ensure time pickers are visible on load if default is Same Day
-            if(orderDetails.delivery_type === 'sameday') {
-                scheduleTimeContainer.classList.remove('hidden');
-                scheduleDateInput.classList.add('hidden'); // Ensure date is hidden for same day
-            }
+            // Initial state for time/date pickers (default to Same Day)
+            timeSelectionContainer.classList.remove('hidden'); // Time fields are always visible when delivery type is selected
+            pickupDateSection.classList.add('hidden'); // Hide date fields initially for Same Day
+            dropDateSection.classList.add('hidden');   // Hide date fields initially for Same Day
         });
     </script>
 
