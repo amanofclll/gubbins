@@ -166,6 +166,10 @@
                         <span id="summary-delivery" class="font-medium text-gray-800 text-right">Not set</span>
                     </div>
                     <div class="flex justify-between">
+                        <span class="text-gray-500">Distance:</span>
+                        <span id="summary-distance" class="font-medium text-gray-800">0 km</span>
+                    </div>
+                    <div class="flex justify-between">
                         <span class="text-gray-500">Package:</span>
                         <span id="summary-package" class="font-medium text-gray-800">Not set</span>
                     </div>
@@ -176,6 +180,14 @@
                     <div id="summary-schedule-row" class="flex justify-between hidden">
                         <span class="text-gray-500">Date:</span>
                         <span id="summary-schedule-date" class="font-medium text-gray-800"></span>
+                    </div>
+                    <div class="flex justify-between border-t pt-3 mt-3">
+                        <span class="text-gray-500">Sender:</span>
+                        <span id="summary-sender-name" class="font-medium text-gray-800"></span>
+                    </div>
+                    <div class="flex justify-between">
+                        <span class="text-gray-500">Receiver:</span>
+                        <span id="summary-receiver-name" class="font-medium text-gray-800"></span>
                     </div>
                 </div>
                 <div class="border-t mt-4 pt-4 hidden" id="summary-total-container">
@@ -213,11 +225,12 @@
                 distance: 0
             };
 
+            // Package data with base costs (not prices per se, but cost factors)
             const packageData = [
-                { id: 'small', name: 'Small', weight: 'Up to 3kg', icon: '<svg class="w-8 h-8 mx-auto mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"></path></svg>', basePrice: 150 },
-                { id: 'medium', name: 'Medium', weight: 'Up to 5kg', icon: '<svg class="w-8 h-8 mx-auto mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M4 7v10c0 2.21 3.582 4 8 4s8-1.79 8-4V7M4 7c0-2.21 3.582-4 8-4s8 1.79 8 4M4 7l8 4.5M20 7l-8 4.5m0 0V21"></path></svg>', basePrice: 250 },
-                { id: 'large', name: 'Large', weight: 'Up to 10kg', icon: '<svg class="w-8 h-8 mx-auto mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M20 12H4"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M20 12H4"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 4v16"></path></svg>', basePrice: 400 },
-                { id: 'extra-large', name: 'X-Large', weight: 'Up to 15kg', icon: '<svg class="w-8 h-8 mx-auto mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"></path></svg>', basePrice: 550 }
+                { id: 'small', name: 'Small', weight: 'Up to 3kg', icon: '<svg class="w-8 h-8 mx-auto mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"></path></svg>', baseCostFactor: 50 }, 
+                { id: 'medium', name: 'Medium', weight: 'Up to 5kg', icon: '<svg class="w-8 h-8 mx-auto mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M4 7v10c0 2.21 3.582 4 8 4s8-1.79 8-4V7M4 7c0-2.21 3.582-4 8-4s8 1.79 8 4M4 7l8 4.5M20 7l-8 4.5m0 0V21"></path></svg>', baseCostFactor: 80 }, 
+                { id: 'large', name: 'Large', weight: 'Up to 10kg', icon: '<svg class="w-8 h-8 mx-auto mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M20 12H4"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M20 12H4"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 4v16"></path></svg>', baseCostFactor: 120 }, 
+                { id: 'extra-large', name: 'X-Large', weight: 'Up to 15kg', icon: '<svg class="w-8 h-8 mx-auto mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"></path></svg>', baseCostFactor: 180 } 
             ];
 
             // --- DOM ELEMENTS ---
@@ -241,7 +254,7 @@
                         ${pkg.icon}
                         <p class="font-semibold text-gray-800">${pkg.name}</p>
                         <p class="text-xs text-gray-500">${pkg.weight}</p>
-                    `;
+                    `; // Removed price display from here
                     card.addEventListener('click', () => selectPackage(pkg, card));
                     packageSelectionContainer.appendChild(card);
                 });
@@ -288,6 +301,33 @@
                 submitBtn.classList.toggle('hidden', currentStep !== totalSteps);
             }
 
+            function calculatePrice() {
+                let total = 0;
+                // Generate a random distance if locations are set
+                if (orderDetails.pickup && orderDetails.delivery) {
+                    // Ensures distance is generated only once per location change or on init
+                    if (orderDetails.distance === 0 || lastPickup !== orderDetails.pickup || lastDelivery !== orderDetails.delivery) {
+                        orderDetails.distance = Math.floor(Math.random() * 25) + 5; // 5-30 km
+                    }
+                } else {
+                    orderDetails.distance = 0;
+                }
+                
+                // Base cost from package size (cost factor)
+                if (orderDetails.package) {
+                    total += orderDetails.package.baseCostFactor; 
+                }
+                // Price per kilometer
+                if (orderDetails.distance > 0) {
+                    total += orderDetails.distance * 8; // Example: ₹8 per km
+                }
+                // Same day premium
+                if (orderDetails.delivery_type === 'sameday') {
+                    total *= 1.2; // 20% premium for same day
+                }
+                orderDetails.price = total;
+            }
+
             function updateSummary() {
                 const pickupFull = orderDetails.pickup + (orderDetails.pickup_suite ? `, ${orderDetails.pickup_suite}` : '');
                 const deliveryFull = orderDetails.delivery + (orderDetails.delivery_suite ? `, ${orderDetails.delivery_suite}` : '');
@@ -298,6 +338,9 @@
                 
                 document.getElementById('summary-delivery-type').textContent = orderDetails.delivery_type === 'sameday' ? 'Same Day' : 'Scheduled';
                 
+                // Update distance
+                document.getElementById('summary-distance').textContent = orderDetails.distance > 0 ? `${orderDetails.distance} km` : 'Calculating...';
+
                 const scheduleRow = document.getElementById('summary-schedule-row');
                 if (orderDetails.delivery_type === 'schedule' && orderDetails.schedule_date) {
                     document.getElementById('summary-schedule-date').textContent = orderDetails.schedule_date;
@@ -306,30 +349,17 @@
                     scheduleRow.classList.add('hidden');
                 }
 
-                if (orderDetails.pickup && orderDetails.delivery) {
-                    orderDetails.distance = Math.floor(Math.random() * 25) + 5;
-                } else {
-                    orderDetails.distance = 0;
-                }
-                
-                let total = 0;
-                if (orderDetails.package) {
-                    total += orderDetails.package.basePrice;
-                }
-                if (orderDetails.distance > 0) {
-                    total += orderDetails.distance * 10;
-                }
-                if (orderDetails.delivery_type === 'sameday') {
-                    total *= 1.2; // 20% premium for same day
-                }
-                orderDetails.price = total;
+                // Display sender and receiver names
+                document.getElementById('summary-sender-name').textContent = orderDetails.sender_name || 'Not set';
+                document.getElementById('summary-receiver-name').textContent = orderDetails.receiver_name || 'Not set';
 
+                calculatePrice(); // Recalculate price every time summary updates
                 document.getElementById('summary-total').textContent = `₹${orderDetails.price.toFixed(2)}`;
                 
                 const placeholder = document.getElementById('summary-placeholder');
                 const summaryContent = document.getElementById('summary-content');
                 const summaryTotal = document.getElementById('summary-total-container');
-                if (orderDetails.pickup || orderDetails.delivery || orderDetails.package || orderDetails.delivery_type) {
+                if (orderDetails.pickup || orderDetails.delivery || orderDetails.package || orderDetails.delivery_type || orderDetails.sender_name || orderDetails.receiver_name) {
                     placeholder.classList.add('hidden');
                     summaryContent.classList.remove('hidden');
                     summaryTotal.classList.remove('hidden');
@@ -347,7 +377,7 @@
                     card.classList.remove('border-red-600', 'bg-red-50', 'ring-2', 'ring-red-500');
                 });
                 selectedCard.classList.add('border-red-600', 'bg-red-50', 'ring-2', 'ring-red-500');
-                updateSummary();
+                updateSummary(); // Update summary and price immediately after package selection
             }
             
             deliveryTypeCards.forEach(card => {
@@ -401,7 +431,13 @@
                 return true;
             }
             
+            let lastPickup = ''; // To track changes for distance calculation
+            let lastDelivery = ''; // To track changes for distance calculation
+
             function captureFormValues() {
+                lastPickup = orderDetails.pickup; // Save current values before updating
+                lastDelivery = orderDetails.delivery;
+
                 orderDetails.pickup = document.getElementById('pickup').value.trim();
                 orderDetails.pickup_suite = document.getElementById('pickup_suite').value.trim();
                 orderDetails.delivery = document.getElementById('delivery').value.trim();
@@ -440,6 +476,7 @@
                 }
             });
             
+            // Listen for input changes on the form to update summary dynamically
             document.getElementById('delivery-form').addEventListener('input', (e) => {
                 captureFormValues();
                 updateSummary();
@@ -449,7 +486,7 @@
             initializePackageSelection();
             setMinScheduleDate();
             updateStepUI();
-            updateSummary();
+            updateSummary(); // Initial summary update
         });
     </script>
 
